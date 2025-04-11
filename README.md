@@ -36,7 +36,7 @@ Brand-Boost AI Ads is an advanced AI-powered platform that helps businesses crea
 - **Lucide React** icons
 - **Vite** for build tooling
 
-### Backend
+### Backend(Will be use for data management and Publish API's)
 - **Node.js** runtime
 - **Express.js** API framework
 - **TypeScript** for type safety
@@ -63,8 +63,8 @@ Brand-Boost AI Ads is an advanced AI-powered platform that helps businesses crea
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/brand-boost-ai-ads.git
-cd brand-boost-ai-ads
+git clone https://github.com/stutiojha14/Brand-Boost
+cd brand-boost-ai-ads-main
 ```
 
 2. Install dependencies:

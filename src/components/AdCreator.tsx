@@ -17,7 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import MediaPreview from "@/components/MediaPreview";
-import { generateContent, GenerationRequest } from "@/services/aiGenerationService";
+import { generateContent, GenerationRequest,fileToBase64 } from "@/services/aiGenerationService";
 import { GoogleGenAI } from "@google/genai"; // Adjust the import path as needed
 
 // Ad state interfaces
@@ -93,13 +93,22 @@ const AdCreator = () => {
   const [textResponse, setTextResponse] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [imagePrompt, setImagePrompt] = useState("");
+  const [imgBase64, setimgBase64] = useState("");
 
 
 const handleGenerateImage = async () => {
-// console.log('qqqqqq=====');
-const ai = new GoogleGenAI({ apiKey: "API_KEY" });
+console.log('qqqqqq=====',adState.fields.imagePrompt,imgBase64,file);
+const ai = new GoogleGenAI({ apiKey: 'API_KEY'}) 
 
-const contents = adState.fields.imagePrompt;
+const contents = [{
+  role:"user",
+  parts:[{
+     text:adState.fields.imagePrompt},...(imgBase64?[{inlineData:{mimeType:file.type,data:imgBase64}}]:[]),
+  ]
+}]
+
+
+
 
 const response = await ai.models.generateContent({
 model: "gemini-2.0-flash-exp-image-generation",
@@ -134,11 +143,19 @@ setImageUrl(imageBlobUrl);
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
-      // Here you would typically process the file (e.g., upload to server)
-      toast({
+      fileToBase64(selectedFile).then((base64) => {
+        
+        setimgBase64(base64)
+         toast({
         title: "File Selected",
         description: `Selected file: ${selectedFile.name}`,
       });
+      })
+      // Here you would typically process the file (e.g., upload to server)
+      // toast({
+      //   title: "File Selected",
+      //   description: `Selected file: ${selectedFile.name}`,
+      // });
     }
   };
 
@@ -626,7 +643,7 @@ setImageUrl(imageBlobUrl);
                           size="sm"
                           onClick={() => {
                           document.getElementById('fileInput')?.click();
-                          handleGenerateImage();
+                          // handleGenerateImage();
                           }}
                         >
                           Browse Files
@@ -634,7 +651,7 @@ setImageUrl(imageBlobUrl);
                       </div>
                       
                       <Button 
-                        onClick={() => handleMediaGenerate("image")} 
+                        onClick={() => handleGenerateImage()}//handleMediaGenerate("image")} 
                         disabled={generatingMedia} 
                         className="w-full mt-4"
                       >
@@ -918,7 +935,7 @@ setImageUrl(imageBlobUrl);
                     
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="ghost" className="w-full">
+                        <Button variant="ghost" className="w-full" >
                           <Wand2 className="w-4 h-4 mr-2" />
                           Customize & Refine
                         </Button>
